@@ -1,0 +1,43 @@
+GNU nano 4.8                            consolidated.yml
+---
+- name: Clone website from Git repository and install on Debian or CentOS server
+  hosts: all
+  become: true
+  tasks:
+    - name: Gather facts about the system
+      setup:
+
+    - name: Install Git
+      package:
+        name: git
+        state: present
+      when: ansible_facts['os_family'] == 'Debian'
+
+    - name: Install Git
+      package:
+        name: git
+        state: present
+      when: ansible_facts['os_family'] == 'RedHat'
+
+    - name: Create website directory
+      file:
+        path: /var/www/html/Assignment
+        state: directory
+
+    - name: Clone website repository
+      git:
+        repo: https://github.com/Uduakobong-Udombat/Assignment-3.git
+        dest: /var/www/html/Assignment
+        version: main
+
+    - name: Start Apache server
+      service:
+        name: apache2
+        state: started
+      when: ansible_facts['os_family'] == 'Debian'
+
+    - name: Start Apache server
+      service:
+        name: httpd
+        state: started
+      when: ansible_facts['os_family'] == 'RedHat'
